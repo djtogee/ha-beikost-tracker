@@ -2,6 +2,13 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.4.0 – 2026-10-23
+
+- Verdrück-Schutz: Das Häkchen „probiert" lässt sich bei einem Eintrag mit Ja/Nein-Bewertung
+  nur nach einer Rückfrage entfernen („… ist schon mit Ja bewertet – Häkchen wirklich
+  entfernen?"). Die Bewertung bleibt dabei erhalten.
+- Abhaken selbst und Einträge ohne Bewertung fragen weiterhin nicht nach
+
 ## 1.3.0 – 2026-10-23
 
 - Ja/Nein lässt sich zurücknehmen: derselbe Knopf nochmal antippen löscht die Angabe.

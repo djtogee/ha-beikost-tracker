@@ -57,7 +57,8 @@ lists:                        # optional – gibt Reihenfolge und Icons vor
 
 ## Bedienung
 
-- **✓** neben dem Namen: schon probiert (To-do-Status *erledigt*).
+- **✓** neben dem Namen: schon probiert (To-do-Status *erledigt*). Ist der Eintrag bereits mit
+  Ja/Nein bewertet, kommt beim Entfernen des Häkchens eine Rückfrage (Verdrück-Schutz).
 - **Ja / Nein**: mag das Kind das Lebensmittel. Setzt automatisch „probiert".
   Denselben Knopf nochmal antippen nimmt die Angabe zurück (war der Eintrag vorher offen,
   wird er dabei auch wieder geöffnet) – so lassen sich Fehlgriffe korrigieren.

@@ -19,7 +19,7 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.3.0";
+const VERSION = "1.4.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
@@ -214,10 +214,22 @@ class BeikostTrackerCard extends HTMLElement {
   }
 
   _toggleTried(cat, item) {
+    const willOpen = item.status === "completed";
+    const mag = magOf(item);
+    // Verdrück-Schutz: Häkchen entfernen, obwohl schon Ja/Nein gewählt ist
+    if (willOpen && mag !== null) {
+      const rating = mag ? I18N.yes : I18N.no;
+      if (!window.confirm(
+        `"${item.summary}" ist schon mit "${rating}" bewertet.\n\n` +
+        `Häkchen „probiert" wirklich entfernen?\n(Die Bewertung bleibt erhalten.)`
+      )) {
+        return;
+      }
+    }
     this._callService("update_item", {
       entity_id: cat.entity,
       item: item.uid || item.summary,
-      status: item.status === "completed" ? "needs_action" : "completed",
+      status: willOpen ? "needs_action" : "completed",
     });
   }
 
