@@ -2,6 +2,12 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.1.1 – 2026-10-23
+
+- Schrift und Bedienelemente einen Tick größer: Lebensmittelnamen, Ja/Nein-Buttons
+  (mehr Fläche zum Treffen), Häkchen, Chips, Eingabefelder, Löschen-Symbol
+- Etwas mehr Zeilenabstand für Finger-Bedienung auf dem Handy
+
 ## 1.1.0 – 2026-10-23
 
 - Kompakter: pro Kategorie werden nur die ersten 5 Einträge gezeigt

@@ -19,7 +19,7 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.1.0";
+const VERSION = "1.1.1";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
@@ -459,57 +459,57 @@ const STYLE = `
   :host { display: block; }
   ha-card { padding: 12px 12px 6px; }
   .head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-  .title { display: flex; align-items: center; gap: 6px; font-size: 1.15rem; font-weight: 600;
+  .title { display: flex; align-items: center; gap: 6px; font-size: 1.2rem; font-weight: 600;
            color: var(--primary-text-color); }
-  .stats { margin-left: auto; font-size: .85rem; color: var(--secondary-text-color); }
+  .stats { margin-left: auto; font-size: .9rem; color: var(--secondary-text-color); }
   .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 8px; }
   .search { display: flex; align-items: center; gap: 6px; flex: 1 1 220px;
             background: var(--secondary-background-color); border-radius: 10px; padding: 6px 10px; }
   .search input { border: 0; outline: 0; background: transparent; width: 100%;
-                  font-size: .95rem; color: var(--primary-text-color); }
+                  font-size: 1rem; color: var(--primary-text-color); }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { border: 1px solid var(--divider-color); background: transparent; border-radius: 14px;
-          padding: 4px 10px; font-size: .8rem; color: var(--secondary-text-color); cursor: pointer; }
+  .chip { border: 1px solid var(--divider-color); background: transparent; border-radius: 15px;
+          padding: 5px 11px; font-size: .85rem; color: var(--secondary-text-color); cursor: pointer; }
   .chip.active { background: var(--primary-color); border-color: var(--primary-color);
                  color: var(--text-primary-color, #fff); }
   .addrow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .addrow input, .addrow select { padding: 7px 9px; border-radius: 9px;
+  .addrow input, .addrow select { padding: 8px 10px; border-radius: 9px;
         border: 1px solid var(--divider-color); background: var(--card-background-color);
-        color: var(--primary-text-color); font-size: .9rem; }
+        color: var(--primary-text-color); font-size: .95rem; }
   .addrow input { flex: 1 1 160px; }
-  .add-btn { border: 0; border-radius: 9px; padding: 7px 14px; cursor: pointer;
+  .add-btn { border: 0; border-radius: 9px; padding: 8px 15px; cursor: pointer;
              background: var(--primary-color); color: var(--text-primary-color, #fff);
-             font-size: .9rem; }
+             font-size: .95rem; }
   .category { margin-top: 10px; }
   .cat-head { display: flex; align-items: center; gap: 6px; padding: 6px 2px 4px;
               border-bottom: 1px solid var(--divider-color);
               font-weight: 600; color: var(--primary-text-color); }
   .cat-name { flex: 1 1 auto; }
-  .cat-counts { font-size: .78rem; font-weight: 400; color: var(--secondary-text-color); }
-  .row { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
-  .food { flex: 1 1 auto; font-size: .95rem; color: var(--primary-text-color); }
+  .cat-counts { font-size: .82rem; font-weight: 400; color: var(--secondary-text-color); }
+  .row { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
+  .food { flex: 1 1 auto; font-size: 1.02rem; color: var(--primary-text-color); }
   .row.tried .food { color: var(--secondary-text-color); }
-  .check { width: 26px; height: 26px; flex: 0 0 26px; border-radius: 50%; cursor: pointer;
+  .check { width: 29px; height: 29px; flex: 0 0 29px; border-radius: 50%; cursor: pointer;
            border: 2px solid var(--divider-color); background: transparent; color: #fff;
            display: flex; align-items: center; justify-content: center; padding: 0; }
   .check.on { background: var(--success-color, #4caf50); border-color: var(--success-color, #4caf50); }
-  .check ha-icon { --mdc-icon-size: 18px; }
-  .mag { border: 1px solid var(--divider-color); background: transparent; border-radius: 8px;
-         padding: 2px 9px; font-size: .8rem; cursor: pointer; color: var(--secondary-text-color); }
+  .check ha-icon { --mdc-icon-size: 20px; }
+  .mag { border: 1px solid var(--divider-color); background: transparent; border-radius: 9px;
+         padding: 4px 11px; font-size: .88rem; cursor: pointer; color: var(--secondary-text-color); }
   .mag.yes-on { background: var(--success-color, #4caf50); border-color: var(--success-color, #4caf50);
                 color: #fff; }
   .mag.no-on { background: var(--error-color, #db4437); border-color: var(--error-color, #db4437);
                color: #fff; }
   .del { border: 0; background: transparent; cursor: pointer; color: var(--secondary-text-color);
-         display: flex; align-items: center; }
-  .del ha-icon { --mdc-icon-size: 18px; }
-  .empty { padding: 8px 2px; font-size: .85rem; color: var(--secondary-text-color); }
-  .more { display: block; margin: 4px 0 2px; padding: 3px 8px; border: 0; border-radius: 8px;
-          background: transparent; color: var(--primary-color); font-size: .8rem;
+         display: flex; align-items: center; padding: 2px; }
+  .del ha-icon { --mdc-icon-size: 20px; }
+  .empty { padding: 8px 2px; font-size: .9rem; color: var(--secondary-text-color); }
+  .more { display: block; margin: 5px 0 2px; padding: 4px 8px; border: 0; border-radius: 8px;
+          background: transparent; color: var(--primary-color); font-size: .85rem;
           cursor: pointer; text-align: left; }
   .more:hover { background: var(--secondary-background-color); }
   .hint { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--divider-color);
-          font-size: .75rem; color: var(--secondary-text-color); }
+          font-size: .8rem; color: var(--secondary-text-color); }
 `;
 
 if (!customElements.get("beikost-tracker")) {
