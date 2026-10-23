@@ -53,6 +53,7 @@ lists:                        # optional – gibt Reihenfolge und Icons vor
 | `title` | `Beikost-Tracker` | Überschrift der Karte |
 | `lists` | automatisch | Liste aus `entity`, `name`, `icon`; bestimmt die Reihenfolge |
 | `auto_add_missing` | `true` | weitere `todo.beikost_*`-Listen hinten anhängen |
+| `max_items` | `5` | sichtbare Einträge je Kategorie in der Normalansicht; der Rest wird über „N weitere anzeigen" aufgeklappt |
 
 ## Bedienung
 

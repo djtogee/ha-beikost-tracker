@@ -2,6 +2,14 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.1.0 – 2026-10-23
+
+- Kompakter: pro Kategorie werden nur die ersten 5 Einträge gezeigt
+  („▸ N weitere anzeigen" / „weniger anzeigen"), konfigurierbar über `max_items`
+- Kürzung greift nur in der Normalansicht – sobald gesucht oder gefiltert wird, sind alle
+  Treffer sichtbar
+- Alphabetische Sortierung je Kategorie bleibt Standard
+
 ## 1.0.0 – 2026-10-23
 
 Erste Version.

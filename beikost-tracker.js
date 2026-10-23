@@ -19,10 +19,11 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
+const DEFAULT_MAX_ITEMS = 5;
 
 const I18N = {
   search: "Lebensmittel suchen …",
@@ -41,6 +42,8 @@ const I18N = {
   unknown: "Liste nicht verfügbar",
   empty: "Keine Einträge gefunden",
   noList: "Keine Beikost-Liste gefunden (todo.beikost_*)",
+  more: (n) => `${n} weitere anzeigen`,
+  less: "weniger anzeigen",
 };
 
 function norm(text) {
@@ -77,6 +80,7 @@ class BeikostTrackerCard extends HTMLElement {
     this._filter = "all";
     this._addCategory = null;
     this._busy = new Set();
+    this._expanded = new Set();  // Kategorien, die "alle anzeigen" geöffnet wurden
     this._built = false;
   }
 
@@ -107,6 +111,12 @@ class BeikostTrackerCard extends HTMLElement {
 
   getCardSize() {
     return 12;
+  }
+
+  /** Wie viele Einträge je Kategorie standardmäßig sichtbar sind (`max_items`). */
+  _maxItems() {
+    const value = Number(this._config?.max_items);
+    return Number.isFinite(value) && value > 0 ? Math.floor(value) : DEFAULT_MAX_ITEMS;
   }
 
   /** Anzeigename/Kategorie aus der Liste selbst ableiten. */
@@ -375,8 +385,15 @@ class BeikostTrackerCard extends HTMLElement {
       head.append(name, counts);
       section.appendChild(head);
 
-      const visible = this._visibleItems(cat.entity);
-      if (!visible.length) {
+      const matches = this._visibleItems(cat.entity);
+      // Kürzen nur in der Normalansicht (kein Suchbegriff, Filter "Alle");
+      // sobald gesucht/gefiltert wird, sind alle Treffer sichtbar.
+      const capped = this._filter === "all" && !this._query.trim();
+      const limit = this._maxItems();
+      const expanded = this._expanded.has(cat.entity);
+      const visible = !capped || expanded ? matches : matches.slice(0, limit);
+
+      if (!matches.length) {
         const empty = document.createElement("div");
         empty.className = "empty";
         empty.textContent = I18N.empty;
@@ -420,6 +437,18 @@ class BeikostTrackerCard extends HTMLElement {
         row.append(checkbox, label, yes, no, del);
         section.appendChild(row);
       });
+
+      if (capped && matches.length > limit) {
+        const more = document.createElement("button");
+        more.className = "more";
+        more.textContent = expanded ? `▾ ${I18N.less}` : `▸ ${I18N.more(matches.length - limit)}`;
+        more.addEventListener("click", () => {
+          if (expanded) this._expanded.delete(cat.entity);
+          else this._expanded.add(cat.entity);
+          this._render();
+        });
+        section.appendChild(more);
+      }
 
       container.appendChild(section);
     });
@@ -475,6 +504,10 @@ const STYLE = `
          display: flex; align-items: center; }
   .del ha-icon { --mdc-icon-size: 18px; }
   .empty { padding: 8px 2px; font-size: .85rem; color: var(--secondary-text-color); }
+  .more { display: block; margin: 4px 0 2px; padding: 3px 8px; border: 0; border-radius: 8px;
+          background: transparent; color: var(--primary-color); font-size: .8rem;
+          cursor: pointer; text-align: left; }
+  .more:hover { background: var(--secondary-background-color); }
   .hint { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--divider-color);
           font-size: .75rem; color: var(--secondary-text-color); }
 `;
