@@ -59,7 +59,9 @@ lists:                        # optional – gibt Reihenfolge und Icons vor
 
 - **✓** neben dem Namen: schon probiert (To-do-Status *erledigt*).
 - **Ja / Nein**: mag das Kind das Lebensmittel. Setzt automatisch „probiert".
-- **Suchfeld**: filtert über alle Kategorien, umlaut-tolerant („kurbis" findet „Kürbis").
+- **Kategorie-Auswahl** (oben): „Alle Kategorien (N)" oder eine einzelne Kategorie als
+  Ansichtsfilter; wirkt zusammen mit Suche und Chips.
+- **Suchfeld**: filtert über die angezeigten Kategorien, umlaut-tolerant („kurbis" findet „Kürbis").
 - **Chips**: Alle · Noch offen · Probiert · Mag sie · Mag nicht.
 - **Hinzufügen**: Text eingeben, Kategorie wählen → Eintrag landet in der To-do-Liste.
 - **🗑**: Eintrag löschen.

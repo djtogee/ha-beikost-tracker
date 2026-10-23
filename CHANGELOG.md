@@ -2,6 +2,13 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.2.0 – 2026-10-23
+
+- Neue Kategorie-Auswahl in der Werkzeugleiste: „Alle Kategorien (N)" oder eine einzelne
+  Kategorie als Ansichtsfilter – kombinierbar mit Suche und den Filter-Chips
+- Kopfzeilen-Statistik zeigt bei aktiver Auswahl nur diese Kategorie
+- Der „Hinzufügen"-Bereich springt automatisch auf die gewählte Kategorie
+
 ## 1.1.1 – 2026-10-23
 
 - Schrift und Bedienelemente einen Tick größer: Lebensmittelnamen, Ja/Nein-Buttons

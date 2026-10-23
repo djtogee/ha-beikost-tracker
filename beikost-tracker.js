@@ -19,7 +19,7 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.1.1";
+const VERSION = "1.2.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
@@ -44,6 +44,7 @@ const I18N = {
   noList: "Keine Beikost-Liste gefunden (todo.beikost_*)",
   more: (n) => `${n} weitere anzeigen`,
   less: "weniger anzeigen",
+  allCategories: (n) => `Alle Kategorien (${n})`,
 };
 
 function norm(text) {
@@ -78,6 +79,7 @@ class BeikostTrackerCard extends HTMLElement {
     this._subscribed = [];   // aktuell abonnierte entity_ids
     this._query = "";
     this._filter = "all";
+    this._catFilter = "";  // "" = alle Kategorien, sonst entity_id einer Liste
     this._addCategory = null;
     this._busy = new Set();
     this._expanded = new Set();  // Kategorien, die "alle anzeigen" geöffnet wurden
@@ -265,15 +267,23 @@ class BeikostTrackerCard extends HTMLElement {
   _render() {
     if (!this.shadowRoot) return;
     if (!this._hass || !this._config) return;
-    const categories = this._categories();
+    const allCategories = this._categories();
     this._lastStates = {};
-    categories.forEach((cat) => {
+    allCategories.forEach((cat) => {
       const state = this._hass.states[cat.entity];
       if (state) this._lastStates[cat.entity] = state.state;
     });
 
-    const allItems = categories.flatMap((cat) => this._items[cat.entity] || []);
-    const total = this._stats(allItems);
+    // Kategorie-Filter: verschwundene Auswahl zurücksetzen
+    if (this._catFilter && !allCategories.some((cat) => cat.entity === this._catFilter)) {
+      this._catFilter = "";
+    }
+    const categories = this._catFilter
+      ? allCategories.filter((cat) => cat.entity === this._catFilter)
+      : allCategories;
+
+    const shownItems = categories.flatMap((cat) => this._items[cat.entity] || []);
+    const total = this._stats(shownItems);
 
     if (!this._built) {
       this.shadowRoot.innerHTML = `<style>${STYLE}</style>`;
@@ -288,6 +298,7 @@ class BeikostTrackerCard extends HTMLElement {
             <ha-icon icon="mdi:magnify"></ha-icon>
             <input class="search-input" type="search" placeholder="${I18N.search}">
           </div>
+          <select class="cat-select" title="Kategorie"></select>
           <div class="chips"></div>
         </div>
         <div class="addrow">
@@ -302,6 +313,10 @@ class BeikostTrackerCard extends HTMLElement {
 
       card.querySelector(".search-input").addEventListener("input", (ev) => {
         this._query = ev.target.value;
+        this._render();
+      });
+      card.querySelector(".cat-select").addEventListener("change", (ev) => {
+        this._catFilter = ev.target.value;
         this._render();
       });
       card.querySelector(".add-btn").addEventListener("click", () => this._addItem(true));
@@ -322,20 +337,41 @@ class BeikostTrackerCard extends HTMLElement {
     const searchInput = this._card.querySelector(".search-input");
     if (searchInput.value !== this._query) searchInput.value = this._query;
 
-    // Kategorie-Auswahl im Hinzufügen-Bereich
+    // Kategorie-Ansichtsfilter (oben in der Werkzeugleiste)
+    const catSelect = this._card.querySelector(".cat-select");
+    const catSignature = allCategories.map((c) => c.entity).join(",");
+    if (catSelect.dataset.signature !== catSignature) {
+      catSelect.innerHTML = "";
+      const all = document.createElement("option");
+      all.value = "";
+      all.textContent = I18N.allCategories(allCategories.length);
+      catSelect.appendChild(all);
+      allCategories.forEach((cat) => {
+        const option = document.createElement("option");
+        option.value = cat.entity;
+        option.textContent = cat.name;
+        catSelect.appendChild(option);
+      });
+      catSelect.dataset.signature = catSignature;
+    }
+    catSelect.value = this._catFilter || "";
+
+    // Kategorie-Auswahl im Hinzufügen-Bereich (immer alle Kategorien)
     const select = this._card.querySelector(".add-select");
-    if (select.dataset.signature !== categories.map((c) => c.entity).join(",")) {
+    if (select.dataset.signature !== catSignature) {
       select.innerHTML = "";
-      categories.forEach((cat) => {
+      allCategories.forEach((cat) => {
         const option = document.createElement("option");
         option.value = cat.entity;
         option.textContent = cat.name;
         select.appendChild(option);
       });
-      select.dataset.signature = categories.map((c) => c.entity).join(",");
+      select.dataset.signature = catSignature;
     }
-    if (!this._addCategory || !categories.some((c) => c.entity === this._addCategory)) {
-      this._addCategory = categories[0]?.entity || null;
+    if (this._catFilter) {
+      this._addCategory = this._catFilter;
+    } else if (!this._addCategory || !allCategories.some((c) => c.entity === this._addCategory)) {
+      this._addCategory = allCategories[0]?.entity || null;
     }
     select.value = this._addCategory || "";
 
@@ -467,6 +503,9 @@ const STYLE = `
             background: var(--secondary-background-color); border-radius: 10px; padding: 6px 10px; }
   .search input { border: 0; outline: 0; background: transparent; width: 100%;
                   font-size: 1rem; color: var(--primary-text-color); }
+  .cat-select { padding: 6px 9px; border-radius: 10px; border: 1px solid var(--divider-color);
+                background: var(--card-background-color); color: var(--primary-text-color);
+                font-size: .9rem; max-width: 100%; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .chip { border: 1px solid var(--divider-color); background: transparent; border-radius: 15px;
           padding: 5px 11px; font-size: .85rem; color: var(--secondary-text-color); cursor: pointer; }
