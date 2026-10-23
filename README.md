@@ -59,6 +59,8 @@ lists:                        # optional – gibt Reihenfolge und Icons vor
 
 - **✓** neben dem Namen: schon probiert (To-do-Status *erledigt*).
 - **Ja / Nein**: mag das Kind das Lebensmittel. Setzt automatisch „probiert".
+  Denselben Knopf nochmal antippen nimmt die Angabe zurück (war der Eintrag vorher offen,
+  wird er dabei auch wieder geöffnet) – so lassen sich Fehlgriffe korrigieren.
 - **Kategorie-Auswahl** (oben): „Alle Kategorien (N)" oder eine einzelne Kategorie als
   Ansichtsfilter; wirkt zusammen mit Suche und Chips.
 - **Suchfeld**: filtert über die angezeigten Kategorien, umlaut-tolerant („kurbis" findet „Kürbis").

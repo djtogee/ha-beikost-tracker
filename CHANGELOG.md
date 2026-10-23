@@ -2,6 +2,13 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.3.0 – 2026-10-23
+
+- Ja/Nein lässt sich zurücknehmen: derselbe Knopf nochmal antippen löscht die Angabe.
+  War der Eintrag vorher „offen", wird er dabei auch wieder geöffnet (Verdrücker korrigierbar)
+- Tooltip an den Knöpfen + Hinweiszeile erklärt das Zurücknehmen
+- Häkchen-Kreis etwas kleiner (25 px statt 29 px, Icon 17 px) – Schriftgrößen unverändert
+
 ## 1.2.0 – 2026-10-23
 
 - Neue Kategorie-Auswahl in der Werkzeugleiste: „Alle Kategorien (N)" oder eine einzelne

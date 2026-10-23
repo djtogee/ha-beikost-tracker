@@ -19,7 +19,7 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
@@ -37,7 +37,7 @@ const I18N = {
   yes: "Ja",
   no: "Nein",
   remove: "Eintrag löschen",
-  hint: "✓ abgehakt = schon probiert · Ja/Nein = mag sie es",
+  hint: "✓ abgehakt = schon probiert · Ja/Nein = mag sie es · nochmal tippen nimmt die Angabe zurück",
   tried: "probiert",
   unknown: "Liste nicht verfügbar",
   empty: "Keine Einträge gefunden",
@@ -45,6 +45,7 @@ const I18N = {
   more: (n) => `${n} weitere anzeigen`,
   less: "weniger anzeigen",
   allCategories: (n) => `Alle Kategorien (${n})`,
+  reset: "nochmal tippen = Angabe zurücksetzen",
 };
 
 function norm(text) {
@@ -62,8 +63,17 @@ function magOf(item) {
   return match[1].toLowerCase() === "ja";
 }
 
+/** "mag: ja"/"mag: nein" aus der Beschreibung entfernen, restlichen Text behalten. */
+function stripMag(description) {
+  return (description || "")
+    .replace(MAG_RE, "")
+    .replace(/\s*·\s*$/, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function setMagInDescription(description, wants) {
-  const cleaned = (description || "").replace(MAG_RE, "").replace(/\s{2,}/g, " ").trim();
+  const cleaned = stripMag(description);
   const value = `mag: ${wants ? "ja" : "nein"}`;
   return cleaned ? `${cleaned} · ${value}` : value;
 }
@@ -83,6 +93,7 @@ class BeikostTrackerCard extends HTMLElement {
     this._addCategory = null;
     this._busy = new Set();
     this._expanded = new Set();  // Kategorien, die "alle anzeigen" geöffnet wurden
+    this._undoTried = new Set();  // Einträge, die durch Ja/Nein automatisch abgehakt wurden
     this._built = false;
   }
 
@@ -210,10 +221,30 @@ class BeikostTrackerCard extends HTMLElement {
     });
   }
 
+  /**
+   * Ja/Nein setzen. Derselbe Knopf nochmal = Angabe zurücknehmen (Verdrücker).
+   * War der Eintrag vorher "offen", wird er beim Zurücknehmen auch wieder geöffnet.
+   */
   _setMag(cat, item, wants) {
+    const key = item.uid || item.summary;
+    const current = magOf(item);
+
+    if (current === wants) {
+      const reopen = this._undoTried.has(key);
+      this._undoTried.delete(key);
+      this._callService("update_item", {
+        entity_id: cat.entity,
+        item: key,
+        status: reopen ? "needs_action" : item.status,
+        description: stripMag(item.description),
+      });
+      return;
+    }
+
+    if (item.status !== "completed") this._undoTried.add(key);
     this._callService("update_item", {
       entity_id: cat.entity,
-      item: item.uid || item.summary,
+      item: key,
       status: "completed",
       description: setMagInDescription(item.description, wants),
     });
@@ -455,11 +486,13 @@ class BeikostTrackerCard extends HTMLElement {
         const yes = document.createElement("button");
         yes.className = `mag${mag === true ? " yes-on" : ""}`;
         yes.textContent = I18N.yes;
+        yes.title = mag === true ? I18N.reset : I18N.likes;
         yes.addEventListener("click", () => this._setMag(cat, item, true));
 
         const no = document.createElement("button");
         no.className = `mag${mag === false ? " no-on" : ""}`;
         no.textContent = I18N.no;
+        no.title = mag === false ? I18N.reset : I18N.dislikes;
         no.addEventListener("click", () => this._setMag(cat, item, false));
 
         const del = document.createElement("button");
@@ -528,11 +561,11 @@ const STYLE = `
   .row { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
   .food { flex: 1 1 auto; font-size: 1.02rem; color: var(--primary-text-color); }
   .row.tried .food { color: var(--secondary-text-color); }
-  .check { width: 29px; height: 29px; flex: 0 0 29px; border-radius: 50%; cursor: pointer;
+  .check { width: 25px; height: 25px; flex: 0 0 25px; border-radius: 50%; cursor: pointer;
            border: 2px solid var(--divider-color); background: transparent; color: #fff;
            display: flex; align-items: center; justify-content: center; padding: 0; }
   .check.on { background: var(--success-color, #4caf50); border-color: var(--success-color, #4caf50); }
-  .check ha-icon { --mdc-icon-size: 20px; }
+  .check ha-icon { --mdc-icon-size: 17px; }
   .mag { border: 1px solid var(--divider-color); background: transparent; border-radius: 9px;
          padding: 4px 11px; font-size: .88rem; cursor: pointer; color: var(--secondary-text-color); }
   .mag.yes-on { background: var(--success-color, #4caf50); border-color: var(--success-color, #4caf50);
