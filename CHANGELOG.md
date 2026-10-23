@@ -2,6 +2,11 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.5.0 – 2026-10-23
+
+- Wird das Häkchen „probiert" nach der Rückfrage entfernt, wird jetzt **auch die
+  Ja/Nein-Bewertung gelöscht** – der Eintrag steht danach wieder komplett unbewertet da
+
 ## 1.4.0 – 2026-10-23
 
 - Verdrück-Schutz: Das Häkchen „probiert" lässt sich bei einem Eintrag mit Ja/Nein-Bewertung
