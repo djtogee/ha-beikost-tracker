@@ -2,6 +2,12 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.10.2 – 2026-10-24
+
+- **Screenshot im README** (`docs/screenshot.jpg`) – zeigt die Karte im Handy-Hochformat
+  (Anzeige-Filter, Neues Lebensmittel, Kategorien mit Ja/Nein und Zählern)
+- Nur Doku/Bild, die Karte selbst unverändert
+
 ## 1.10.1 – 2026-10-24
 
 - **Neutral für fremde Nutzer:** Beim Hinzufügen der Karte wird als Titel nur noch

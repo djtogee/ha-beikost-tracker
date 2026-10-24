@@ -9,6 +9,8 @@ weiterhin in der Home-Assistant-To-do-Ansicht, in der Companion-App und in Assis
 Im Repo liegt ein Katalog mit **14 Kategorien und 291 Lebensmitteln**, den du in einem
 Schritt einspielen kannst.
 
+![Beikost-Tracker-Karte in Home Assistant](https://raw.githubusercontent.com/djtogee/ha-beikost-tracker/main/docs/screenshot.jpg)
+
 ## Voraussetzungen
 
 - Home Assistant **2023.12 oder neuer** (getestet bis 2026.x) – die Karte nutzt die
@@ -160,6 +162,7 @@ Companion-App und Assist arbeiten mit denselben Listen.
 | `hacs.json` | HACS-Manifest (Name, Dateiname, Mindestversion) |
 | `tools/katalog.json` | 14 Kategorien mit 291 Lebensmitteln |
 | `tools/setup.py` | spielt den Katalog in die To-do-Listen ein (Trockenlauf / `--apply`) |
+| `docs/screenshot.jpg` | Bild der Karte für README und HACS-Store |
 | `CHANGELOG.md` | Versionshistorie |
 
 ## Lizenz
