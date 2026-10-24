@@ -2,6 +2,16 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.6.0 – 2026-10-24
+
+- **Bestätigung beim Hinzufügen:** Nach „Hinzufügen" erscheint unter der Eingabezeile eine
+  grüne Meldung „✓ ‚Mango' zu ‚Obst' hinzugefügt"; sie blendet sich nach ~4 s von selbst aus
+- Fehler werden sichtbar gemeldet statt still verschluckt: leeres Eingabefeld („Bitte zuerst
+  einen Namen eingeben."), kein Schreibzugriff möglich („… konnte nicht hinzugefügt werden")
+- Doppelte Einträge werden erkannt (Groß-/Kleinschreibung und Umlaute egal) und nicht zweimal
+  angelegt: „‚Apfel' steht schon in ‚Obst'"
+- Meldung ist mit `role="status"` ausgezeichnet und wird auch von Screenreadern vorgelesen
+
 ## 1.5.0 – 2026-10-23
 
 - Wird das Häkchen „probiert" nach der Rückfrage entfernt, wird jetzt **auch die

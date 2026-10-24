@@ -19,7 +19,7 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.5.0";
+const VERSION = "1.6.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
@@ -46,6 +46,12 @@ const I18N = {
   less: "weniger anzeigen",
   allCategories: (n) => `Alle Kategorien (${n})`,
   reset: "nochmal tippen = Angabe zurücksetzen",
+  // Rückmeldung im Hinzufügen-Bereich
+  added: (name, cat) => `✓ „${name}“ zu „${cat}“ hinzugefügt`,
+  addFailed: (name) => `„${name}“ konnte nicht hinzugefügt werden`,
+  addEmpty: "Bitte zuerst einen Namen eingeben.",
+  addNoCategory: "Keine Kategorie ausgewählt.",
+  addDuplicate: (name, cat) => `„${name}“ steht schon in „${cat}“`,
 };
 
 function norm(text) {
@@ -94,6 +100,8 @@ class BeikostTrackerCard extends HTMLElement {
     this._busy = new Set();
     this._expanded = new Set();  // Kategorien, die "alle anzeigen" geöffnet wurden
     this._undoTried = new Set();  // Einträge, die durch Ja/Nein automatisch abgehakt wurden
+    this._msg = null;        // { text, kind } — Rückmeldung unterm Hinzufügen-Bereich
+    this._msgTimer = null;
     this._built = false;
   }
 
@@ -112,6 +120,10 @@ class BeikostTrackerCard extends HTMLElement {
 
   disconnectedCallback() {
     this._teardown();
+    if (this._msgTimer) {
+      clearTimeout(this._msgTimer);
+      this._msgTimer = null;
+    }
   }
 
   _teardown() {
@@ -203,14 +215,45 @@ class BeikostTrackerCard extends HTMLElement {
     });
   }
 
+  /**
+   * Service-Call mit Doppelklick-Schutz.
+   * Rückgabe: Promise<true> bei Erfolg, Promise<false> bei Fehler,
+   * Promise<null> wenn derselbe Aufruf gerade läuft (nichts passiert).
+   */
   _callService(service, data) {
     const key = `${data.entity_id}|${data.item || data.uid}`;
-    if (this._busy.has(key)) return;
+    if (this._busy.has(key)) return Promise.resolve(null);
     this._busy.add(key);
-    this._hass
+    return this._hass
       .callService("todo", service, data)
-      .catch((err) => console.error("beikost-tracker:", service, err))
+      .then(() => true)
+      .catch((err) => {
+        console.error("beikost-tracker:", service, err);
+        return false;
+      })
       .finally(() => this._busy.delete(key));
+  }
+
+  /** Kurze Rückmeldung unterm Hinzufügen-Bereich; verschwindet von selbst. */
+  _notify(text, kind = "ok") {
+    if (this._msgTimer) {
+      clearTimeout(this._msgTimer);
+      this._msgTimer = null;
+    }
+    this._msg = { text, kind };
+    this._paintMsg();
+    this._msgTimer = setTimeout(() => {
+      this._msg = null;
+      this._msgTimer = null;
+      this._paintMsg();
+    }, kind === "ok" ? 4000 : 7000);
+  }
+
+  _paintMsg() {
+    const el = this._card?.querySelector(".add-msg");
+    if (!el) return;
+    el.textContent = this._msg?.text || "";
+    el.className = this._msg ? `add-msg show ${this._msg.kind}` : "add-msg";
   }
 
   _toggleTried(cat, item) {
@@ -285,11 +328,36 @@ class BeikostTrackerCard extends HTMLElement {
     const select = this.shadowRoot.querySelector(".add-select");
     const name = (input?.value || "").trim();
     const entityId = select?.value || this._addCategory;
-    if (!name || !entityId) return;
-    this._callService("add_item", { entity_id: entityId, item: name });
+    const cat = this._categories().find((entry) => entry.entity === entityId);
+    const catName = cat?.name || entityId || "";
+
+    if (!entityId) {
+      this._notify(I18N.addNoCategory, "error");
+      return;
+    }
+    if (!name) {
+      this._notify(I18N.addEmpty, "error");
+      input?.focus();
+      return;
+    }
+    // Doppelte Einträge in derselben Kategorie verhindern (umlaut-tolerant verglichen);
+    // gemeldet wird die vorhandene Schreibweise, nicht die gerade getippte.
+    const exists = (this._items[entityId] || []).find(
+      (item) => norm(item.summary) === norm(name)
+    );
+    if (exists) {
+      this._notify(I18N.addDuplicate(exists.summary, catName), "error");
+      return;
+    }
+
     if (input) input.value = "";
     input?.focus();
     if (categoryName) this._addCategory = entityId;
+
+    this._callService("add_item", { entity_id: entityId, item: name }).then((ok) => {
+      if (ok === true) this._notify(I18N.added(name, catName), "ok");
+      else if (ok === false) this._notify(I18N.addFailed(name), "error");
+    });
   }
 
   /** sichtbare Einträge einer Kategorie nach Suche + Filter */
@@ -360,6 +428,7 @@ class BeikostTrackerCard extends HTMLElement {
           <select class="add-select"></select>
           <button class="add-btn">${I18N.addBtn}</button>
         </div>
+        <div class="add-msg" role="status" aria-live="polite"></div>
         <div class="lists"></div>
         <div class="hint">${I18N.hint}</div>`;
       this.shadowRoot.appendChild(card);
@@ -382,6 +451,8 @@ class BeikostTrackerCard extends HTMLElement {
       });
       this._built = true;
     }
+
+    this._paintMsg();
 
     this._card.querySelector(".title-text").textContent =
       this._config.title || "Beikost-Tracker";
@@ -575,6 +646,13 @@ const STYLE = `
   .add-btn { border: 0; border-radius: 9px; padding: 8px 15px; cursor: pointer;
              background: var(--primary-color); color: var(--text-primary-color, #fff);
              font-size: .95rem; }
+  .add-msg { display: none; margin: -4px 0 10px; padding: 6px 10px; border-radius: 9px;
+             font-size: .9rem; color: var(--primary-text-color); }
+  .add-msg.show { display: block; }
+  .add-msg.ok { background: rgba(76, 175, 80, .16);
+                border: 1px solid var(--success-color, #4caf50); }
+  .add-msg.error { background: rgba(219, 68, 55, .16);
+                   border: 1px solid var(--error-color, #db4437); }
   .category { margin-top: 10px; }
   .cat-head { display: flex; align-items: center; gap: 6px; padding: 6px 2px 4px;
               border-bottom: 1px solid var(--divider-color);
