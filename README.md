@@ -13,9 +13,10 @@ Schritt einspielen kannst.
 
 ## Voraussetzungen
 
-- Home Assistant **2023.12 oder neuer** (getestet bis 2026.x) – die Karte nutzt die
-  To-do-Listen von HA (`local_todo` gibt es ab 2023.11, den Live-Abgleich
-  `todo/item/subscribe` ab 2023.12).
+- Home Assistant **2024.1.0 oder neuer** (getestet bis 2026.x). Genau diesen Wert prüft HACS
+  (`homeassistant` in `hacs.json`) und verweigert sonst die Installation. Technisch bräuchte
+  die Karte sogar nur 2023.12 – die To-do-Listen gibt es ab 2023.11, den Live-Abgleich
+  `todo/item/subscribe` ab 2023.12 –, 2024.1.0 ist als Sicherheitspuffer gewählt.
 - Für den bequemen Weg: [HACS](https://hacs.xyz) installiert.
 
 ## Installation über HACS

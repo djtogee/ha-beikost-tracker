@@ -2,6 +2,13 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.10.3 – 2026-10-24
+
+- README-Korrektur: Unter „Voraussetzungen" stand 2023.12, während `hacs.json` 2024.1.0
+  erzwingt. Jetzt nennt das README den tatsächlich geprüften Wert (2024.1.0) und erklärt,
+  warum die technisch nötige Untergrenze (2023.12) darunter liegt
+- Nur Doku, die Karte selbst unverändert
+
 ## 1.10.2 – 2026-10-24
 
 - **Screenshot im README** (`docs/screenshot.jpg`) – zeigt die Karte im Handy-Hochformat
