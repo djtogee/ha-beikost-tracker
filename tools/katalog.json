@@ -1,0 +1,85 @@
+{
+  "Obst": [
+    "Apfel", "Banane", "Birne", "Erdbeere", "Himbeere", "Heidelbeere", "Brombeere",
+    "Johannisbeere", "Kirsche", "Pflaume", "Zwetschge", "Pfirsich", "Aprikose", "Nektarine",
+    "Weintraube", "Orange", "Mandarine", "Zitrone", "Limette", "Kiwi", "Mango", "Ananas",
+    "Wassermelone", "Honigmelone", "Papaya", "Avocado", "Feige", "Dattel", "Granatapfel",
+    "Maracuja", "Litschi", "Kokosnuss (Fruchtfleisch)", "Rhabarber", "Holunderbeere",
+    "Preiselbeere", "Stachelbeere", "Quitte", "Sanddorn", "Goji-Beere", "Physalis"
+  ],
+  "Gemüse": [
+    "Karotte", "Kartoffel", "Süßkartoffel", "Pastinake", "Petersilienwurzel", "Steckrübe",
+    "Rote Bete", "Sellerie", "Kürbis (Hokkaido)", "Kürbis (Butternut)", "Zucchini", "Aubergine",
+    "Brokkoli", "Blumenkohl", "Rosenkohl", "Wirsing", "Weißkohl", "Rotkohl", "Grünkohl",
+    "Spinat", "Mangold", "Feldsalat", "Kopfsalat", "Rucola", "Chicorée", "Fenchel",
+    "Kohlrabi", "Gurke", "Tomate", "Paprika", "Mais", "Erbse", "Prinzessbohne",
+    "Lauch (Porree)", "Zwiebel", "Frühlingszwiebel", "Knoblauch", "Champignon",
+    "Austernpilz", "Spargel", "Radieschen", "Rettich", "Sprossen (Alfalfa)", "Olive"
+  ],
+  "Getreide & Beilagen": [
+    "Haferflocken", "Reis", "Vollkornreis", "Nudeln", "Dinkel", "Weizen", "Roggen",
+    "Gerste", "Hirse", "Buchweizen", "Quinoa", "Amaranth", "Polenta (Maisgrieß)",
+    "Couscous", "Bulgur", "Grieß", "Weizenmehl", "Dinkelmehl", "Vollkornbrot",
+    "Weißbrot", "Toastbrot", "Knäckebrot", "Zwieback", "Brötchen", "Semmel",
+    "Haferbrei (Porridge)", "Milchbrei", "Getreidebrei", "Müsli", "Cornflakes",
+    "Waffel", "Pfannkuchen", "Reiswaffel"
+  ],
+  "Hülsenfrüchte": [
+    "Linsen (rot)", "Linsen (braun)", "Kichererbsen", "Kidneybohnen", "Weiße Bohnen",
+    "Schwarze Bohnen", "Erbsen (getrocknet)", "Sojabohne", "Tofu", "Tempeh", "Edamame",
+    "Erbsenpüree", "Hummus", "Falafel"
+  ],
+  "Milch & Käse": [
+    "Muttermilch", "Pre-Nahrung", "Kuhmilch", "Ziegenmilch", "Joghurt (natur)",
+    "Griechischer Joghurt", "Skyr", "Quark", "Frischkäse", "Hüttenkäse",
+    "Gouda", "Edamer", "Emmentaler", "Butterkäse", "Mozzarella", "Parmesan",
+    "Camembert", "Feta", "Schmelzkäse", "Käse (Rohmilch)",
+    "Sahne", "Crème fraîche", "Schmand", "Buttermilch", "Kondensmilch", "Kefir"
+  ],
+  "Fleisch & Wurst": [
+    "Hähnchenbrust", "Putenbrust", "Hackfleisch (Rind)", "Rindfleisch", "Kalbfleisch",
+    "Schweinefleisch", "Lammfleisch", "Hähnchenschenkel", "Frikadelle", "Braten",
+    "Leberwurst", "Geflügelwurst", "Bockwurst", "Wiener Würstchen", "Salami",
+    "Schinken (gekocht)", "Bacon", "Leber", "Bolognese", "Gulasch"
+  ],
+  "Fisch": [
+    "Lachs", "Forelle", "Kabeljau", "Seelachs", "Dorsch", "Zander", "Hering",
+    "Thunfisch", "Sardine", "Makrele", "Garnelen", "Krabben", "Muscheln",
+    "Fischstäbchen", "Räucherlachs"
+  ],
+  "Ei": [
+    "Eigelb (hartgekocht)", "Ei (hartgekocht)", "Rührei", "Spiegelei",
+    "Gekochtes Ei im Brei", "Omelett", "Ei in Backwaren"
+  ],
+  "Nüsse & Samen": [
+    "Mandeln (gemahlen)", "Mandeln (ganz)", "Haselnüsse", "Walnüsse",
+    "Cashewkerne", "Erdnuss", "Erdnussmus", "Mandelnmus", "Sonnenblumenkerne",
+    "Kürbiskerne", "Sesam", "Tahin", "Chiasamen", "Leinsamen (geschrotet)",
+    "Mohn", "Nuss-Nougat-Creme"
+  ],
+  "Kräuter & Gewürze": [
+    "Petersilie", "Schnittlauch", "Dill", "Basilikum", "Oregano", "Thymian",
+    "Rosmarin", "Salz", "Pfeffer", "Zimt", "Muskatnuss", "Kurkuma", "Kreuzkümmel",
+    "Paprikapulver", "Curry", "Kardamom", "Ingwer", "Vanille", "Lorbeerblatt", "Knoblauchpulver"
+  ],
+  "Öle & Fette": [
+    "Rapsöl", "Olivenöl", "Sonnenblumenöl", "Kokosöl", "Leinöl", "Butter",
+    "Margarine", "Ghee", "Schmalz", "Sesamöl"
+  ],
+  "Süßes & Snacks": [
+    "Honig (erst ab 12 Mon.)", "Ahornsirup", "Zucker", "Traubenzucker",
+    "Schokolade (Zartbitter)", "Vollmilchschokolade", "Keks", "Butterkeks",
+    "Marmelade", "Obstmus ohne Zucker", "Eiscreme", "Pudding", "Grießbrei",
+    "Kuchen", "Salzstangen", "Chips", "Popcorn", "Rosinen", "Gummibärchen"
+  ],
+  "Getränke": [
+    "Wasser", "Fencheltee", "Kamillentee", "Kindertee", "Apfelsaft",
+    "Orangensaft", "Saftschorle", "Kuhmilch zum Trinken", "Reismilch",
+    "Hafermilch", "Sojamilch", "Mandelmilch", "Kakaogetränk"
+  ],
+  "Brotaufstriche & Sonstiges": [
+    "Obstmus (Apfel)", "Obstmus (Birne)", "Gemüsebrei", "Kartoffelpüree",
+    "Suppe (Gemüse)", "Eintopf", "Pesto", "Tomatensoße", "Mayonnaise", "Ketchup",
+    "Senf", "Sauce Hollandaise", "Auflauf", "Pizza"
+  ]
+}

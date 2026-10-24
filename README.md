@@ -6,38 +6,96 @@ gruppiert nach Kategorien und mit direktem Hinzufügen neuer Lebensmittel.
 
 Die Daten liegen in ganz normalen **To-do-Listen** (`todo.*`) – sie funktionieren also
 weiterhin in der Home-Assistant-To-do-Ansicht, in der Companion-App und in Assist.
+Im Repo liegt ein Katalog mit **14 Kategorien und 291 Lebensmitteln**, den du in einem
+Schritt einspielen kannst.
+
+## Voraussetzungen
+
+- Home Assistant **2023.12 oder neuer** (getestet bis 2026.x) – die Karte nutzt die
+  To-do-Listen von HA (`local_todo` gibt es ab 2023.11, den Live-Abgleich
+  `todo/item/subscribe` ab 2023.12).
+- Für den bequemen Weg: [HACS](https://hacs.xyz) installiert.
 
 ## Installation über HACS
 
-1. HACS öffnen → **Frontend** → oben rechts **⋮** → **Benutzerdefinierte Repositories**.
-2. Repository-URL eintragen, Kategorie **Dashboard** (bzw. „Lovelace"), hinzufügen.
+1. HACS öffnen → **Dashboard** (in älteren Versionen „Frontend") → oben rechts **⋮** →
+   **Benutzerdefinierte Repositories**.
+2. `https://github.com/djtogee/ha-beikost-tracker` eintragen, Kategorie **Dashboard** →
+   hinzufügen.
 3. In der HACS-Liste **Beikost Tracker** öffnen → **Download**.
-4. Browser hart neu laden (Cache).
+4. Browser hart neu laden (Cache). HACS legt die Datei unter `www/community/` ab und trägt
+   die Lovelace-Ressource selbst ein – **keine** `/local/…`-Ressource zusätzlich anlegen.
+   Bei älteren HACS-Versionen die Ressource notfalls von Hand eintragen:
+   `/hacsfiles/ha-beikost-tracker/beikost-tracker.js`, Typ **JavaScript-Modul**.
 
-HACS legt die Ressource selbst an – `/local/…`-Ressource nicht zusätzlich eintragen.
+## Einrichtung (einmalig)
 
-## Manuelle Installation
-
-1. `beikost-tracker.js` nach `config/www/beikost/beikost-tracker.js` kopieren.
-2. Einstellungen → Dashboards → **Ressourcen** → `/local/beikost/beikost-tracker.js`,
-   Typ **JavaScript-Modul**.
-3. Browser neu laden.
-
-## To-do-Listen anlegen
+### 1. To-do-Listen anlegen
 
 Pro Kategorie eine lokale To-do-Liste über **Einstellungen → Geräte & Dienste → Helfer →
-To-do-Liste**. Der Name muss mit `Beikost · ` beginnen (z. B. `Beikost · Obst`), daraus
-entsteht `todo.beikost_obst`. Ohne `lists`-Option in der Karte werden **alle** Listen mit
-diesem Präfix automatisch erkannt und alphabetisch angezeigt.
+To-do-Liste**. Der Name muss mit `Beikost · ` beginnen (Mittelpunkt mit Leerzeichen davor und
+danach). Das lässt sich nicht per Skript oder YAML erledigen – `local_todo` ist ein reiner
+Einrichtungsassistent. Aus dem Namen entsteht die Entität:
 
-Empfehlung: Einträge ohne Status anlegen (offen = noch nicht probiert).
+| Listenname (genau so anlegen) | Entität | Lebensmittel |
+|---|---|---|
+| `Beikost · Obst` | `todo.beikost_obst` | 40 |
+| `Beikost · Gemüse` | `todo.beikost_gemuse` | 44 |
+| `Beikost · Getreide & Beilagen` | `todo.beikost_getreide_beilagen` | 33 |
+| `Beikost · Hülsenfrüchte` | `todo.beikost_hulsenfruchte` | 14 |
+| `Beikost · Milch & Käse` | `todo.beikost_milch_kase` | 26 |
+| `Beikost · Fleisch & Wurst` | `todo.beikost_fleisch_wurst` | 20 |
+| `Beikost · Fisch` | `todo.beikost_fisch` | 15 |
+| `Beikost · Ei` | `todo.beikost_ei` | 7 |
+| `Beikost · Nüsse & Samen` | `todo.beikost_nusse_samen` | 16 |
+| `Beikost · Kräuter & Gewürze` | `todo.beikost_krauter_gewurze` | 20 |
+| `Beikost · Öle & Fette` | `todo.beikost_ole_fette` | 10 |
+| `Beikost · Süßes & Snacks` | `todo.beikost_susses_snacks` | 19 |
+| `Beikost · Getränke` | `todo.beikost_getranke` | 13 |
+| `Beikost · Brotaufstriche & Sonstiges` | `todo.beikost_brotaufstriche_sonstiges` | 14 |
 
-## Karte einbauen
+Die Entitäts-ID leitet Home Assistant aus dem Namen ab (Umlaute werden dabei aufgelöst), du
+musst sie nicht selbst setzen. Die Karte erkennt alle Listen mit dem Präfix `Beikost`
+automatisch und ordnet sie über den Listennamen dem Katalog zu.
+
+### 2. Katalog einspielen (empfohlen)
+
+`tools/setup.py` füllt die Lebensmittel in die angelegten Listen. Es ist idempotent –
+vorhandene Einträge werden nicht doppelt angelegt, und es ändert nichts an abgehakten oder
+bewerteten Einträgen.
+
+```bash
+# Trockenlauf: zeigt, was fehlt, und ändert nichts
+HASS_URL=http://homeassistant.local:8123 HASS_TOKEN=<dein-token> python3 tools/setup.py
+
+# Schreiben
+HASS_URL=http://homeassistant.local:8123 HASS_TOKEN=<dein-token> python3 tools/setup.py --apply
+```
+
+Den Token erzeugst du in Home Assistant unter **Profil → Sicherheit → Long-Lived Access
+Token**. Das Skript braucht nur Python 3 (keine Zusatzpakete) und läuft auf deinem Rechner
+oder direkt auf dem HA-Host. Es liest Zustände und legt fehlende Einträge an; Listen selbst
+erstellt es nicht.
+
+Alternativ legst du die Lebensmittel von Hand an – `tools/katalog.json` ist eine einfache
+Zuordnung `Kategorie → [Lebensmittel, …]` und lässt sich frei anpassen (eigene Kategorien,
+andere Auswahl).
+
+### 3. Karte einbauen
+
+Dashboard bearbeiten → Karte hinzufügen → manuell (YAML):
+
+```yaml
+type: custom:beikost-tracker
+title: Beikost-Tracker
+```
+
+Optional mit `lists:` gibst du Reihenfolge, Anzeigenamen und Icons vor:
 
 ```yaml
 type: custom:beikost-tracker
 title: Isabella · Beikost-Tracker
-lists:                        # optional – gibt Reihenfolge und Icons vor
+lists:
   - entity: todo.beikost_obst
     name: Obst
     icon: mdi:fruit-cherries
@@ -84,7 +142,25 @@ lists:                        # optional – gibt Reihenfolge und Icons vor
 - „Ja/Nein" = Text in der Beschreibung des Eintrags: `mag: ja` bzw. `mag: nein`.
   Anderer Text in der Beschreibung bleibt erhalten (`Erst seit 10/2026 · mag: ja`).
 
-Damit sind die Daten auch ohne diese Karte les- und pflegbar.
+Damit sind die Daten auch ohne diese Karte les- und pflegbar – jede To-do-Karte, die
+Companion-App und Assist arbeiten mit denselben Listen.
+
+## Manuelle Installation (ohne HACS)
+
+1. `beikost-tracker.js` nach `config/www/beikost/beikost-tracker.js` kopieren.
+2. Einstellungen → Dashboards → **Ressourcen** → `/local/beikost/beikost-tracker.js`,
+   Typ **JavaScript-Modul**.
+3. Browser neu laden.
+
+## Dateien im Repo
+
+| Datei | Zweck |
+|---|---|
+| `beikost-tracker.js` | die Karte (das Einzige, was HACS installiert) |
+| `hacs.json` | HACS-Manifest (Name, Dateiname, Mindestversion) |
+| `tools/katalog.json` | 14 Kategorien mit 291 Lebensmitteln |
+| `tools/setup.py` | spielt den Katalog in die To-do-Listen ein (Trockenlauf / `--apply`) |
+| `CHANGELOG.md` | Versionshistorie |
 
 ## Lizenz
 

@@ -19,7 +19,7 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.9.0";
+const VERSION = "1.10.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;

@@ -2,6 +2,21 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.10.0 – 2026-10-24
+
+Kein Funktionswechsel an der Karte – dieses Release macht das Repo für andere nutzbar:
+
+- **Lebensmittel-Katalog liegt jetzt im Repo** (`tools/katalog.json`, 14 Kategorien,
+  291 Lebensmittel)
+- **`tools/setup.py`** spielt den Katalog in die eigenen To-do-Listen ein: Trockenlauf als
+  Standard, `--apply` schreibt, idempotent (nichts wird doppelt angelegt), erkennt fehlende
+  Listen und nennt sie zum Anlegen
+- **README komplett überarbeitet:** Schritt-für-Schritt-Einrichtung (Listen anlegen, Katalog
+  einspielen, Karte einbauen), Tabelle aller 14 Listennamen, Voraussetzungen
+- **Mindest-Home-Assistant-Version von 2026.1.0 auf 2024.1.0 gesenkt** – die Karte braucht nur
+  die To-do-Listen (ab 2023.11) und den Live-Abgleich `todo/item/subscribe` (ab 2023.12);
+  vorher blockierte HACS Installationen auf älteren Versionen
+
 ## 1.9.0 – 2026-10-24
 
 - **Noch kompakter:** In der Normalansicht zeigt jede Kategorie jetzt nur noch die ersten **3**
