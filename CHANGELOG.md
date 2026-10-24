@@ -2,6 +2,14 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.10.1 – 2026-10-24
+
+- **Neutral für fremde Nutzer:** Beim Hinzufügen der Karte wird als Titel nur noch
+  „Beikost-Tracker" vorgeschlagen (vorher ein personalisierter Name); der Titel ist frei
+  wählbar (`title:` in der Karten-Konfiguration), z. B. mit dem Namen des Kindes
+- Kopfkommentar der Karte und README-Beispiele ohne Personennamen
+- Neuer Test im Testlauf: die Karte darf keinen Personennamen enthalten
+
 ## 1.10.0 – 2026-10-24
 
 Kein Funktionswechsel an der Karte – dieses Release macht das Repo für andere nutzbar:

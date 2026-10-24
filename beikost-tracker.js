@@ -1,5 +1,5 @@
 /*
- * beikost-tracker — Lovelace-Karte für den Beikost-Tracker (Familie Gottschalk)
+ * beikost-tracker — Lovelace-Karte für einen Beikost-Tracker (Lebensmittelliste fürs Baby)
  *
  * Datenhaltung: eine lokale To-do-Liste (`todo.*`) je Kategorie bleibt der Speicher.
  *   - abgehakt  = "schon probiert"      (todo-Status completed)
@@ -12,14 +12,14 @@
  *
  * Karte:
  *   type: custom:beikost-tracker
- *   title: Isabella · Beikost-Tracker      # optional
+ *   title: Beikost-Tracker                 # optional, frei wählbar (z. B. „Lina · Beikost")
  *   lists:                                 # optional; sonst automatisch alle todo.beikost_*
  *     - entity: todo.beikost_obst
  *       name: Obst
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.10.0";
+const VERSION = "1.10.1";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
@@ -116,7 +116,7 @@ class BeikostTrackerCard extends HTMLElement {
   }
 
   static getStubConfig() {
-    return { title: "Isabella · Beikost-Tracker" };
+    return { title: "Beikost-Tracker" };
   }
 
   setConfig(config) {

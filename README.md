@@ -94,7 +94,7 @@ Optional mit `lists:` gibst du Reihenfolge, Anzeigenamen und Icons vor:
 
 ```yaml
 type: custom:beikost-tracker
-title: Isabella · Beikost-Tracker
+title: Beikost-Tracker        # frei wählbar, z. B. „Lina · Beikost"
 lists:
   - entity: todo.beikost_obst
     name: Obst
