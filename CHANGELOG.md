@@ -2,6 +2,12 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.9.0 – 2026-10-24
+
+- **Noch kompakter:** In der Normalansicht zeigt jede Kategorie jetzt nur noch die ersten **3**
+  Einträge (vorher 5); der Rest bleibt über „▸ N weitere anzeigen" erreichbar
+- Einstellbar wie bisher über `max_items` in der Karten-Konfiguration
+
 ## 1.8.0 – 2026-10-24
 
 - **Suche und Filter zeigen nur noch Kategorien mit Treffern:** Kategorien ohne passende

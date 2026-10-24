@@ -19,11 +19,11 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.8.0";
+const VERSION = "1.9.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
-const DEFAULT_MAX_ITEMS = 5;
+const DEFAULT_MAX_ITEMS = 3;
 
 const I18N = {
   search: "Lebensmittel suchen …",
