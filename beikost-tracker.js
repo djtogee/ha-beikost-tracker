@@ -19,7 +19,7 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.7.0";
+const VERSION = "1.8.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
@@ -42,6 +42,13 @@ const I18N = {
   unknown: "Liste nicht verfügbar",
   empty: "Keine Einträge gefunden",
   noList: "Keine Beikost-Liste gefunden (todo.beikost_*)",
+  /** Text, wenn Suche/Filter in keiner Kategorie Treffer haben. */
+  noMatches: (query, filterLabel) => {
+    const parts = [];
+    if (query) parts.push(`Suche „${query}“`);
+    if (filterLabel) parts.push(`Filter „${filterLabel}“`);
+    return parts.length ? `Keine Treffer für ${parts.join(" + ")}` : "Keine Treffer";
+  },
   more: (n) => `${n} weitere anzeigen`,
   less: "weniger anzeigen",
   allCategories: (n) => `Alle Kategorien (${n})`,
@@ -382,6 +389,18 @@ class BeikostTrackerCard extends HTMLElement {
       .sort((a, b) => a.summary.localeCompare(b.summary, "de"));
   }
 
+  /** Filter-Chips (Schlüssel + Beschriftung) — eine Quelle für Anzeige und Meldungstexte. */
+  _filterDefs() {
+    return [
+      ["all", I18N.all], ["open", I18N.open], ["done", I18N.done],
+      ["likes", I18N.likes], ["dislikes", I18N.dislikes],
+    ];
+  }
+
+  _filterLabel() {
+    return this._filterDefs().find(([key]) => key === this._filter)?.[1] || "";
+  }
+
   _stats(items) {
     const tried = items.filter((item) => item.status === "completed").length;
     const likes = items.filter((item) => magOf(item) === true).length;
@@ -507,10 +526,7 @@ class BeikostTrackerCard extends HTMLElement {
 
     // Filter-Chips
     const chips = this._card.querySelector(".chips");
-    const chipDefs = [
-      ["all", I18N.all], ["open", I18N.open], ["done", I18N.done],
-      ["likes", I18N.likes], ["dislikes", I18N.dislikes],
-    ];
+    const chipDefs = this._filterDefs();
     chips.innerHTML = "";
     chipDefs.forEach(([key, label]) => {
       const chip = document.createElement("button");
@@ -530,10 +546,17 @@ class BeikostTrackerCard extends HTMLElement {
       container.innerHTML = `<div class="empty">${I18N.noList}</div>`;
       return;
     }
+    // Bei aktiver Suche oder aktivem Chip werden Kategorien ohne Treffer weggelassen
+    // (sonst steht pro Kategorie nur „Keine Einträge gefunden" im Weg).
+    const filtering = this._query.trim() !== "" || this._filter !== "all";
+    let rendered = 0;
     categories.forEach((cat) => {
       const items = this._items[cat.entity] || [];
       const stats = this._stats(items);
       const state = this._hass.states[cat.entity];
+      const matches = this._visibleItems(cat.entity);
+      if (filtering && !matches.length) return;
+      rendered++;
       const section = document.createElement("section");
       section.className = "category";
 
@@ -551,7 +574,6 @@ class BeikostTrackerCard extends HTMLElement {
       head.append(name, counts);
       section.appendChild(head);
 
-      const matches = this._visibleItems(cat.entity);
       // Kürzen nur in der Normalansicht (kein Suchbegriff, Filter "Alle");
       // sobald gesucht/gefiltert wird, sind alle Treffer sichtbar.
       const capped = this._filter === "all" && !this._query.trim();
@@ -620,6 +642,14 @@ class BeikostTrackerCard extends HTMLElement {
 
       container.appendChild(section);
     });
+
+    // Suche/Filter ohne jeden Treffer: ein Hinweis statt lauter leerer Kategorien
+    if (filtering && !rendered) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = I18N.noMatches(this._query.trim(), this._filterLabel());
+      container.appendChild(empty);
+    }
   }
 }
 

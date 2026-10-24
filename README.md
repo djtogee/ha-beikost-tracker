@@ -67,8 +67,11 @@ lists:                        # optional – gibt Reihenfolge und Icons vor
   Ansichtsfilter; wirkt zusammen mit Suche und Chips.
 - Der obere Bereich ist in zwei beschriftete Abschnitte geteilt: **„Anzeige-Filter"** (Suche,
   Kategorie-Auswahl, Chips) und **„Neues Lebensmittel"** (Eingabefeld + Kategorie + Hinzufügen).
-- **Suchfeld**: filtert über die angezeigten Kategorien, umlaut-tolerant („kurbis" findet „Kürbis").
-- **Chips**: Alle · Noch offen · Probiert · Mag sie · Mag nicht.
+- **Suchfeld**: filtert über alle Kategorien, umlaut-tolerant („kurbis" findet „Kürbis").
+  Kategorien ohne Treffer werden dabei ausgeblendet; findet sich gar nichts, kommt ein zentraler
+  Hinweis („Keine Treffer für Suche ‚xyz'").
+- **Chips**: Alle · Noch offen · Probiert · Mag sie · Mag nicht — dieselbe Regel: nur Kategorien
+  mit Treffern bleiben stehen, kombinierbar mit Suche und Kategorie-Auswahl.
 - **Hinzufügen**: Text eingeben, Kategorie wählen → Eintrag landet in der To-do-Liste.
   Darunter erscheint eine grüne Bestätigung („✓ ‚Mango' zu ‚Obst' hinzugefügt"), die sich nach
   ein paar Sekunden von selbst ausblendet. Steht das Lebensmittel schon in der Kategorie, kommt

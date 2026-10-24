@@ -2,6 +2,16 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.8.0 – 2026-10-24
+
+- **Suche und Filter zeigen nur noch Kategorien mit Treffern:** Kategorien ohne passende
+  Einträge werden beim Suchen oder bei aktivem Chip komplett ausgeblendet (vorher stand in
+  jeder davon nur „Keine Einträge gefunden" im Weg)
+- Findet die Suche/der Filter **gar nichts**, erscheint einmal zentral ein Hinweis, der beides
+  benennt: „Keine Treffer für Suche ‚xyz' + Filter ‚Mag sie nicht'"
+- Die Normalansicht (keine Suche, Chip „Alle") bleibt unverändert: alle Kategorien sichtbar,
+  gekürzt auf `max_items`
+
 ## 1.7.0 – 2026-10-24
 
 - **Klarere Gliederung oben:** Der Filterbereich (Suche, Kategorie-Auswahl, Chips) trägt jetzt die
