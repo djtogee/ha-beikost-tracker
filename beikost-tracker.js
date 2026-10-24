@@ -19,7 +19,7 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.6.0";
+const VERSION = "1.7.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
@@ -46,6 +46,9 @@ const I18N = {
   less: "weniger anzeigen",
   allCategories: (n) => `Alle Kategorien (${n})`,
   reset: "nochmal tippen = Angabe zurücksetzen",
+  // Abschnitts-Überschriften im oberen Bereich
+  sectionFilter: "Anzeige-Filter",
+  sectionAdd: "Neues Lebensmittel",
   // Rückmeldung im Hinzufügen-Bereich
   added: (name, cat) => `✓ „${name}“ zu „${cat}“ hinzugefügt`,
   addFailed: (name) => `„${name}“ konnte nicht hinzugefügt werden`,
@@ -415,6 +418,7 @@ class BeikostTrackerCard extends HTMLElement {
           <div class="title"><ha-icon icon="mdi:baby-bottle-outline"></ha-icon><span class="title-text"></span></div>
           <div class="stats"></div>
         </div>
+        <div class="section-label"><span>${I18N.sectionFilter}</span></div>
         <div class="toolbar">
           <div class="search">
             <ha-icon icon="mdi:magnify"></ha-icon>
@@ -423,6 +427,7 @@ class BeikostTrackerCard extends HTMLElement {
           <select class="cat-select" title="Kategorie"></select>
           <div class="chips"></div>
         </div>
+        <div class="section-label"><span>${I18N.sectionAdd}</span></div>
         <div class="addrow">
           <input class="add-input" type="text" placeholder="${I18N.add}">
           <select class="add-select"></select>
@@ -625,7 +630,13 @@ const STYLE = `
   .title { display: flex; align-items: center; gap: 6px; font-size: 1.2rem; font-weight: 600;
            color: var(--primary-text-color); }
   .stats { margin-left: auto; font-size: .9rem; color: var(--secondary-text-color); }
-  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 8px; }
+  .section-label { display: flex; align-items: center; gap: 8px; margin: 12px 0 6px;
+                   font-size: .74rem; font-weight: 600; letter-spacing: .06em;
+                   text-transform: uppercase; color: var(--secondary-text-color); }
+  .section-label span { flex: 0 0 auto; }
+  .section-label::after { content: ""; flex: 1 1 auto; height: 1px;
+                          background: var(--divider-color); }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 4px; }
   .search { display: flex; align-items: center; gap: 6px; flex: 1 1 220px;
             background: var(--secondary-background-color); border-radius: 10px; padding: 6px 10px; }
   .search input { border: 0; outline: 0; background: transparent; width: 100%;

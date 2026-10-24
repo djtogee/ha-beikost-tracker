@@ -2,6 +2,14 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.7.0 – 2026-10-24
+
+- **Klarere Gliederung oben:** Der Filterbereich (Suche, Kategorie-Auswahl, Chips) trägt jetzt die
+  Überschrift **„Anzeige-Filter"**, der Eingabebereich die Überschrift **„Neues Lebensmittel"** –
+  jeweils in kleiner Großschrift mit dünner Trennlinie über die Kartenbreite
+- Damit ist auf einen Blick erkennbar, wofür die Bedienelemente da sind (filtern vs. eintragen)
+- Nur Darstellung, keine Verhaltensänderung
+
 ## 1.6.0 – 2026-10-24
 
 - **Bestätigung beim Hinzufügen:** Nach „Hinzufügen" erscheint unter der Eingabezeile eine

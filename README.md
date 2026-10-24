@@ -65,6 +65,8 @@ lists:                        # optional – gibt Reihenfolge und Icons vor
   wird er dabei auch wieder geöffnet) – so lassen sich Fehlgriffe korrigieren.
 - **Kategorie-Auswahl** (oben): „Alle Kategorien (N)" oder eine einzelne Kategorie als
   Ansichtsfilter; wirkt zusammen mit Suche und Chips.
+- Der obere Bereich ist in zwei beschriftete Abschnitte geteilt: **„Anzeige-Filter"** (Suche,
+  Kategorie-Auswahl, Chips) und **„Neues Lebensmittel"** (Eingabefeld + Kategorie + Hinzufügen).
 - **Suchfeld**: filtert über die angezeigten Kategorien, umlaut-tolerant („kurbis" findet „Kürbis").
 - **Chips**: Alle · Noch offen · Probiert · Mag sie · Mag nicht.
 - **Hinzufügen**: Text eingeben, Kategorie wählen → Eintrag landet in der To-do-Liste.
