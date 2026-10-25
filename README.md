@@ -121,6 +121,9 @@ lists:
 - **✓** neben dem Namen: schon probiert (To-do-Status *erledigt*). Ist der Eintrag bereits mit
   Ja/Nein bewertet, kommt beim Entfernen des Häkchens eine Rückfrage; nach dem Bestätigen sind
   Häkchen **und** Bewertung weg (Verdrück-Schutz).
+  Die Rückfrage erscheint **in der Karte** mit den Knöpfen „Abbrechen" und „Häkchen entfernen"
+  (bzw. „Löschen" beim Mülleimer) – kein Browser-Dialog, denn der zeigt in der Companion-App
+  und in WebViews oft nur ein einzelnes „OK". Escape oder ein Klick daneben bricht ab.
 - **Ja / Nein**: mag das Kind das Lebensmittel. Setzt automatisch „probiert".
   Denselben Knopf nochmal antippen nimmt die Angabe zurück (war der Eintrag vorher offen,
   wird er dabei auch wieder geöffnet) – so lassen sich Fehlgriffe korrigieren.

@@ -19,7 +19,7 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.10.3";
+const VERSION = "1.11.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
@@ -37,6 +37,10 @@ const I18N = {
   yes: "Ja",
   no: "Nein",
   remove: "Eintrag löschen",
+  // eigener Bestätigungsdialog (window.confirm zeigt in Apps/WebViews oft nur „OK")
+  cancel: "Abbrechen",
+  removeCheck: "Häkchen entfernen",
+  removeFood: "Löschen",
   hint: "✓ abgehakt = schon probiert · Ja/Nein = mag sie es · nochmal tippen nimmt die Angabe zurück",
   tried: "probiert",
   unknown: "Liste nicht verfügbar",
@@ -266,20 +270,48 @@ class BeikostTrackerCard extends HTMLElement {
     el.className = this._msg ? `add-msg show ${this._msg.kind}` : "add-msg";
   }
 
-  _toggleTried(cat, item) {
+  /**
+   * Eigener Bestätigungsdialog statt window.confirm: der Browser-Dialog zeigt in der
+   * Companion-App / in WebViews teils nur „OK" — hier gibt es immer „Abbrechen".
+   * Auflösung: Promise<boolean>.
+   */
+  _askConfirm(text, okLabel) {
+    return new Promise((resolve) => {
+      const box = this._card?.querySelector(".confirm");
+      if (!box) {
+        resolve(false);
+        return;
+      }
+      this._confirmState = { resolve };
+      box.querySelector(".confirm-text").textContent = text;
+      box.querySelector(".confirm-ok").textContent = okLabel;
+      box.hidden = false;
+      box.querySelector(".confirm-cancel").focus();
+    });
+  }
+
+  _answerConfirm(ok) {
+    const box = this._card?.querySelector(".confirm");
+    if (box) box.hidden = true;
+    const state = this._confirmState;
+    this._confirmState = null;
+    if (state) state.resolve(ok);
+  }
+
+  async _toggleTried(cat, item) {
     const key = item.uid || item.summary;
     const willOpen = item.status === "completed";
     const mag = magOf(item);
     // Verdrück-Schutz: Häkchen entfernen, obwohl schon Ja/Nein gewählt ist
     if (willOpen && mag !== null) {
       const rating = mag ? I18N.yes : I18N.no;
-      if (!window.confirm(
-        `"${item.summary}" ist schon mit "${rating}" bewertet.\n\n` +
+      const ok = await this._askConfirm(
+        `„${item.summary}" ist schon mit „${rating}" bewertet.\n\n` +
         `Häkchen „probiert" wirklich entfernen?\n` +
-        `(Dabei wird auch die Ja/Nein-Bewertung gelöscht.)`
-      )) {
-        return;
-      }
+        `(Dabei wird auch die Ja/Nein-Bewertung gelöscht.)`,
+        I18N.removeCheck
+      );
+      if (!ok) return;
       // Bestätigt: Häkchen weg UND Bewertung entfernen → Eintrag ist wieder unbewertet
       this._undoTried.delete(key);
       this._callService("update_item", {
@@ -454,9 +486,31 @@ class BeikostTrackerCard extends HTMLElement {
         </div>
         <div class="add-msg" role="status" aria-live="polite"></div>
         <div class="lists"></div>
-        <div class="hint">${I18N.hint}</div>`;
+        <div class="hint">${I18N.hint}</div>
+        <div class="confirm" hidden>
+          <div class="confirm-box" role="alertdialog" aria-modal="true">
+            <div class="confirm-text"></div>
+            <div class="confirm-actions">
+              <button class="confirm-cancel"></button>
+              <button class="confirm-ok"></button>
+            </div>
+          </div>
+        </div>`;
       this.shadowRoot.appendChild(card);
       this._card = card;
+      card.querySelector(".confirm-cancel").textContent = I18N.cancel;
+      card.querySelector(".confirm-cancel").addEventListener("click", () => this._answerConfirm(false));
+      card.querySelector(".confirm-ok").addEventListener("click", () => this._answerConfirm(true));
+      card.querySelector(".confirm").addEventListener("click", (ev) => {
+        if (ev.target === ev.currentTarget) this._answerConfirm(false);  // Klick neben die Box
+      });
+      this.addEventListener("keydown", (ev) => {
+        const box = card.querySelector(".confirm");
+        if (ev.key === "Escape" && !box.hidden) {
+          ev.preventDefault();
+          this._answerConfirm(false);
+        }
+      });
 
       card.querySelector(".search-input").addEventListener("input", (ev) => {
         this._query = ev.target.value;
@@ -620,8 +674,12 @@ class BeikostTrackerCard extends HTMLElement {
         del.className = "del";
         del.title = I18N.remove;
         del.innerHTML = '<ha-icon icon="mdi:trash-can-outline"></ha-icon>';
-        del.addEventListener("click", () => {
-          if (confirm(`"${item.summary}" aus "${cat.name}" löschen?`)) this._removeItem(cat, item);
+        del.addEventListener("click", async () => {
+          const ok = await this._askConfirm(
+            `„${item.summary}" aus „${cat.name}" löschen?`,
+            I18N.removeFood
+          );
+          if (ok) this._removeItem(cat, item);
         });
 
         row.append(checkbox, label, yes, no, del);
@@ -657,11 +715,11 @@ const STYLE = `
   :host { display: block; }
   ha-card { padding: 12px 12px 6px; }
   .head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-  .title { display: flex; align-items: center; gap: 6px; font-size: 1.2rem; font-weight: 600;
+  .title { display: flex; align-items: center; gap: 6px; font-size: 1.26rem; font-weight: 600;
            color: var(--primary-text-color); }
-  .stats { margin-left: auto; font-size: .9rem; color: var(--secondary-text-color); }
+  .stats { margin-left: auto; font-size: .95rem; color: var(--secondary-text-color); }
   .section-label { display: flex; align-items: center; gap: 8px; margin: 12px 0 6px;
-                   font-size: .74rem; font-weight: 600; letter-spacing: .06em;
+                   font-size: .78rem; font-weight: 600; letter-spacing: .06em;
                    text-transform: uppercase; color: var(--secondary-text-color); }
   .section-label span { flex: 0 0 auto; }
   .section-label::after { content: ""; flex: 1 1 auto; height: 1px;
@@ -670,25 +728,25 @@ const STYLE = `
   .search { display: flex; align-items: center; gap: 6px; flex: 1 1 220px;
             background: var(--secondary-background-color); border-radius: 10px; padding: 6px 10px; }
   .search input { border: 0; outline: 0; background: transparent; width: 100%;
-                  font-size: 1rem; color: var(--primary-text-color); }
-  .cat-select { padding: 6px 9px; border-radius: 10px; border: 1px solid var(--divider-color);
+                  font-size: 1.06rem; color: var(--primary-text-color); }
+  .cat-select { padding: 7px 10px; border-radius: 10px; border: 1px solid var(--divider-color);
                 background: var(--card-background-color); color: var(--primary-text-color);
-                font-size: .9rem; max-width: 100%; }
+                font-size: .96rem; max-width: 100%; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { border: 1px solid var(--divider-color); background: transparent; border-radius: 15px;
-          padding: 5px 11px; font-size: .85rem; color: var(--secondary-text-color); cursor: pointer; }
+  .chip { border: 1px solid var(--divider-color); background: transparent; border-radius: 16px;
+          padding: 6px 12px; font-size: .9rem; color: var(--secondary-text-color); cursor: pointer; }
   .chip.active { background: var(--primary-color); border-color: var(--primary-color);
                  color: var(--text-primary-color, #fff); }
   .addrow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .addrow input, .addrow select { padding: 8px 10px; border-radius: 9px;
+  .addrow input, .addrow select { padding: 9px 11px; border-radius: 10px;
         border: 1px solid var(--divider-color); background: var(--card-background-color);
-        color: var(--primary-text-color); font-size: .95rem; }
+        color: var(--primary-text-color); font-size: 1.02rem; }
   .addrow input { flex: 1 1 160px; }
-  .add-btn { border: 0; border-radius: 9px; padding: 8px 15px; cursor: pointer;
+  .add-btn { border: 0; border-radius: 10px; padding: 10px 17px; cursor: pointer;
              background: var(--primary-color); color: var(--text-primary-color, #fff);
-             font-size: .95rem; }
-  .add-msg { display: none; margin: -4px 0 10px; padding: 6px 10px; border-radius: 9px;
-             font-size: .9rem; color: var(--primary-text-color); }
+             font-size: 1.02rem; }
+  .add-msg { display: none; margin: -4px 0 10px; padding: 7px 11px; border-radius: 10px;
+             font-size: .95rem; color: var(--primary-text-color); }
   .add-msg.show { display: block; }
   .add-msg.ok { background: rgba(76, 175, 80, .16);
                 border: 1px solid var(--success-color, #4caf50); }
@@ -699,31 +757,45 @@ const STYLE = `
               border-bottom: 1px solid var(--divider-color);
               font-weight: 600; color: var(--primary-text-color); }
   .cat-name { flex: 1 1 auto; }
-  .cat-counts { font-size: .82rem; font-weight: 400; color: var(--secondary-text-color); }
-  .row { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
-  .food { flex: 1 1 auto; font-size: 1.02rem; color: var(--primary-text-color); }
+  .cat-counts { font-size: .87rem; font-weight: 400; color: var(--secondary-text-color); }
+  .row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+  .food { flex: 1 1 auto; font-size: 1.09rem; color: var(--primary-text-color); }
   .row.tried .food { color: var(--secondary-text-color); }
-  .check { width: 25px; height: 25px; flex: 0 0 25px; border-radius: 50%; cursor: pointer;
+  .check { width: 27px; height: 27px; flex: 0 0 27px; border-radius: 50%; cursor: pointer;
            border: 2px solid var(--divider-color); background: transparent; color: #fff;
            display: flex; align-items: center; justify-content: center; padding: 0; }
   .check.on { background: var(--success-color, #4caf50); border-color: var(--success-color, #4caf50); }
-  .check ha-icon { --mdc-icon-size: 17px; }
-  .mag { border: 1px solid var(--divider-color); background: transparent; border-radius: 9px;
-         padding: 4px 11px; font-size: .88rem; cursor: pointer; color: var(--secondary-text-color); }
+  .check ha-icon { --mdc-icon-size: 18px; }
+  .mag { border: 1px solid var(--divider-color); background: transparent; border-radius: 10px;
+         padding: 5px 12px; font-size: .94rem; cursor: pointer; color: var(--secondary-text-color); }
   .mag.yes-on { background: var(--success-color, #4caf50); border-color: var(--success-color, #4caf50);
                 color: #fff; }
   .mag.no-on { background: var(--error-color, #db4437); border-color: var(--error-color, #db4437);
                color: #fff; }
   .del { border: 0; background: transparent; cursor: pointer; color: var(--secondary-text-color);
          display: flex; align-items: center; padding: 2px; }
-  .del ha-icon { --mdc-icon-size: 20px; }
-  .empty { padding: 8px 2px; font-size: .9rem; color: var(--secondary-text-color); }
-  .more { display: block; margin: 5px 0 2px; padding: 4px 8px; border: 0; border-radius: 8px;
-          background: transparent; color: var(--primary-color); font-size: .85rem;
+  .del ha-icon { --mdc-icon-size: 21px; }
+  .empty { padding: 8px 2px; font-size: .95rem; color: var(--secondary-text-color); }
+  .more { display: block; margin: 6px 0 2px; padding: 5px 9px; border: 0; border-radius: 9px;
+          background: transparent; color: var(--primary-color); font-size: .9rem;
           cursor: pointer; text-align: left; }
   .more:hover { background: var(--secondary-background-color); }
   .hint { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--divider-color);
-          font-size: .8rem; color: var(--secondary-text-color); }
+          font-size: .84rem; color: var(--secondary-text-color); }
+  .confirm { position: fixed; inset: 0; z-index: 999; display: flex; align-items: center;
+             justify-content: center; padding: 20px; background: rgba(0, 0, 0, .45); }
+  .confirm[hidden] { display: none; }
+  .confirm-box { width: 100%; max-width: 360px; padding: 16px 18px; border-radius: 14px;
+                 background: var(--card-background-color, #fff); color: var(--primary-text-color);
+                 box-shadow: 0 10px 30px rgba(0, 0, 0, .35); }
+  .confirm-text { white-space: pre-line; font-size: 1rem; line-height: 1.45; }
+  .confirm-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end;
+                     margin-top: 16px; }
+  .confirm-actions button { padding: 10px 16px; border-radius: 10px; cursor: pointer;
+                            font-size: 1rem; border: 1px solid var(--divider-color);
+                            background: transparent; color: var(--primary-text-color); }
+  .confirm-ok { background: var(--error-color, #db4437);
+                border-color: var(--error-color, #db4437); color: #fff; }
 `;
 
 if (!customElements.get("beikost-tracker")) {

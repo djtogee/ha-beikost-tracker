@@ -2,6 +2,17 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.11.0 – 2026-10-24
+
+- **Eigener Bestätigungsdialog statt `window.confirm`:** Beim Entfernen eines Häkchens mit
+  vorhandener Bewertung und beim Löschen eines Eintrags erscheint die Rückfrage jetzt in der
+  Karte – mit „Abbrechen" **und** der Bestätigung. Vorher zeigte der Browser-Dialog in der
+  Companion-App bzw. in WebViews teils nur ein einzelnes „OK", ein Abbrechen war nicht möglich.
+  Escape oder ein Klick neben den Dialog bricht ebenfalls ab.
+- **Schrift und Bedienelemente einen Tick größer:** Lebensmittelnamen, Ja/Nein-Knöpfe, Chips,
+  Häkchen (27 px, Icon 18 px), Eingabefelder, Hinzufügen-Knopf, Zähler und Hinweiszeile – alles
+  etwa 5–8 % größer, Zeilen etwas luftiger für die Fingerbedienung
+
 ## 1.10.3 – 2026-10-24
 
 - README-Korrektur: Unter „Voraussetzungen" stand 2023.12, während `hacs.json` 2024.1.0
