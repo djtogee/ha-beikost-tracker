@@ -2,6 +2,15 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.12.0 – 2026-10-25
+
+- **Die Kategorie-Auswahl bleibt gemerkt:** Nach einem Neuladen der Seite (auch in der
+  Companion-App) steht wieder die zuletzt benutzte Kategorie im Anzeige-Filter, nicht mehr
+  „Alle Kategorien". Gespeichert wird das pro Gerät im Browser (`localStorage`), „Alle
+  Kategorien" wählen löscht den Merker, und eine nicht mehr existierende Liste wird
+  automatisch verworfen (der Merker dann auch entfernt)
+- Neue Option `storage_key`, falls mehrere Karten unabhängig merken sollen
+
 ## 1.11.0 – 2026-10-24
 
 - **Eigener Bestätigungsdialog statt `window.confirm`:** Beim Entfernen eines Häkchens mit

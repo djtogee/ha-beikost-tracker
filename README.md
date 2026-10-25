@@ -115,6 +115,7 @@ lists:
 | `lists` | automatisch | Liste aus `entity`, `name`, `icon`; bestimmt die Reihenfolge |
 | `auto_add_missing` | `true` | weitere `todo.beikost_*`-Listen hinten anhängen |
 | `max_items` | `3` | sichtbare Einträge je Kategorie in der Normalansicht; der Rest wird über „N weitere anzeigen" aufgeklappt |
+| `storage_key` | `beikost-tracker` | Schlüssel für die gemerkte Kategorie-Auswahl im Browser (`localStorage`) |
 
 ## Bedienung
 
@@ -128,7 +129,11 @@ lists:
   Denselben Knopf nochmal antippen nimmt die Angabe zurück (war der Eintrag vorher offen,
   wird er dabei auch wieder geöffnet) – so lassen sich Fehlgriffe korrigieren.
 - **Kategorie-Auswahl** (oben): „Alle Kategorien (N)" oder eine einzelne Kategorie als
-  Ansichtsfilter; wirkt zusammen mit Suche und Chips.
+  Ansichtsfilter; wirkt zusammen mit Suche und Chips. Die Auswahl **bleibt erhalten** — nach
+  einem Neuladen der Seite (auch in der Companion-App) steht wieder die zuletzt benutzte
+  Kategorie da, nicht „Alle Kategorien". Gespeichert wird das im Browser des jeweiligen
+  Geräts (`localStorage`), „Alle Kategorien" wählen löscht den Merker. Existiert die gemerkte
+  Liste nicht mehr, fällt die Karte automatisch auf „Alle Kategorien" zurück.
 - Der obere Bereich ist in zwei beschriftete Abschnitte geteilt: **„Anzeige-Filter"** (Suche,
   Kategorie-Auswahl, Chips) und **„Neues Lebensmittel"** (Eingabefeld + Kategorie + Hinzufügen).
 - **Suchfeld**: filtert über alle Kategorien, umlaut-tolerant („kurbis" findet „Kürbis").

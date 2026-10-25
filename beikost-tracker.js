@@ -19,9 +19,10 @@
  *       icon: mdi:fruit-cherries
  */
 
-const VERSION = "1.11.0";
+const VERSION = "1.12.0";
 const ITEM_SUBSCRIBE = "todo/item/subscribe";
 const CAT_PREFIX = "todo.beikost_";
+const STORAGE_PREFIX = "beikost-tracker";  // localStorage-Schlüssel für die Kategorie-Auswahl
 const MAG_RE = /mag\s*:\s*(ja|nein)/i;
 const DEFAULT_MAX_ITEMS = 3;
 
@@ -126,6 +127,31 @@ class BeikostTrackerCard extends HTMLElement {
   setConfig(config) {
     this._config = config || {};
     this._built = false;
+    // Zuletzt gewählte Kategorie wiederherstellen — so steht nach dem Neuladen der Seite
+    // nicht wieder „Alle Kategorien" da, sondern die zuletzt benutzte Liste.
+    this._catFilter = this._loadCatFilter();
+  }
+
+  /** Schlüssel der gespeicherten Kategorie-Auswahl (per `storage_key` änderbar). */
+  _storageKey() {
+    return `${this._config?.storage_key || STORAGE_PREFIX}.catFilter`;
+  }
+
+  _loadCatFilter() {
+    try {
+      return window.localStorage.getItem(this._storageKey()) || "";
+    } catch (err) {
+      return "";  // Privatmodus o. Ä. — Auswahl gilt dann nur für die Sitzung
+    }
+  }
+
+  _saveCatFilter(value) {
+    try {
+      if (value) window.localStorage.setItem(this._storageKey(), value);
+      else window.localStorage.removeItem(this._storageKey());
+    } catch (err) {
+      /* Speichern nicht möglich — die Karte soll deswegen nicht stören */
+    }
   }
 
   connectedCallback() {
@@ -450,9 +476,10 @@ class BeikostTrackerCard extends HTMLElement {
       if (state) this._lastStates[cat.entity] = state.state;
     });
 
-    // Kategorie-Filter: verschwundene Auswahl zurücksetzen
+    // Kategorie-Filter: verschwundene Auswahl zurücksetzen (und aus dem Speicher entfernen)
     if (this._catFilter && !allCategories.some((cat) => cat.entity === this._catFilter)) {
       this._catFilter = "";
+      this._saveCatFilter("");
     }
     const categories = this._catFilter
       ? allCategories.filter((cat) => cat.entity === this._catFilter)
@@ -518,6 +545,7 @@ class BeikostTrackerCard extends HTMLElement {
       });
       card.querySelector(".cat-select").addEventListener("change", (ev) => {
         this._catFilter = ev.target.value;
+        this._saveCatFilter(this._catFilter);  // Auswahl überlebt das Neuladen der Seite
         this._render();
       });
       card.querySelector(".add-btn").addEventListener("click", () => this._addItem(true));
