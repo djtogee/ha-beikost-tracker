@@ -2,6 +2,15 @@
 
 Alle nennenswerten Änderungen an dieser Karte.
 
+## 1.13.0 – 2026-10-26
+
+- **Schriftgrößen wieder auf das Maß vor 1.11.0** (Nutzerwunsch: die Vergrößerung war zu
+  wuchtig). Zurückgesetzt sind Lebensmittelnamen, Ja/Nein-Knöpfe, Chips, Suchfeld,
+  Kategorie-Auswahl, Eingabefelder, Hinzufügen-Knopf, Zähler, Hinweiszeile, das Löschen-Symbol
+  und der Zeilenabstand; das Häkchen ist wieder 25 px (Icon 17 px) statt 27/18
+- Unverändert bleiben alle Funktionen aus 1.11.0–1.12.0, insbesondere der eigene
+  Bestätigungsdialog (statt `window.confirm`) und die gemerkte Kategorie-Auswahl
+
 ## 1.12.0 – 2026-10-25
 
 - **Die Kategorie-Auswahl bleibt gemerkt:** Nach einem Neuladen der Seite (auch in der
